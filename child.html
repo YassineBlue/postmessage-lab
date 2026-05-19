@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab Chat - Child Window</title>
+    <style>
+        body { font-family: sans-serif; padding: 15px; background: #e2f0d9; margin: 0; }
+        #child-log { background: white; padding: 8px; height: 80px; overflow-y: auto; border: 1px solid #aaa; margin-bottom: 8px;}
+    </style>
+</head>
+<body>
+
+    <h3>Child Node Window</h3>
+    <div id="child-log">Waiting for parent signals...</div>
+    
+    <input type="text" id="child-reply" placeholder="Type specific reply...">
+    <!-- This tracks who sent the last message so we can reply manually if needed -->
+    <button onclick="sendManualReply()">Send Manual Reply</button>
+
+    <script>
+        const log = document.getElementById('child-log');
+        const trustedOrigin = 'http://127.0.0.1'; 
+        let lastSenderSource = null;
+
+        // 1. Receiving from Parent & Sending Automatic Acknowledgment
+        window.addEventListener('message', (event) => {
+            if (event.origin !== trustedOrigin) return;
+
+            log.innerHTML += `<div>Received: "${event.data}"</div>`;
+            
+            // Save the source window context for future manual replies
+            lastSenderSource = event.source; 
+
+            // IMMEDIATELY SEND ACKNOWLEDGMENT BACK
+            // event.source points directly back to index.html (the parent window context)
+            event.source.postMessage(`[ACK] Received message: "${event.data}"`, event.origin);
+        });
+
+        // 2. Sending an Independent Manual Reply
+        function sendManualReply() {
+            const input = document.getElementById('child-reply');
+            
+            if (lastSenderSource) {
+                lastSenderSource.postMessage(input.value, trustedOrigin);
+                log.innerHTML += `<div style="color: green;">Sent: "${input.value}"</div>`;
+                input.value = '';
+            } else {
+                alert("No active communication link established yet! Parent must message first.");
+            }
+        }
+    </script>
+</body>
+</html>

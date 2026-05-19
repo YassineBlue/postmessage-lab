@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab Chat - Parent Window</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
+        #chat-box { border: 1px solid #ccc; height: 150px; overflow-y: auto; background: white; padding: 10px; margin-bottom: 10px; }
+        iframe { width: 100%; height: 200px; border: 2px dashed #21a13d; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>Lab Messenger: Parent Window</h2>
+    <div id="chat-box"></div>
+    
+    <input type="text" id="parent-input" placeholder="Type message to iframe...">
+    <button onclick="sendMessageToChild()">Send to Child</button>
+
+    <!--  Child Window -->
+    <iframe id="child-iframe" src="child.html"></iframe>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const iframe = document.getElementById('child-iframe');
+        const trustedOrigin = 'http://127.0.0.1'; 
+
+        // 1. Sending to Child
+        function sendMessageToChild() {
+            const input = document.getElementById('parent-input');
+            const msg = input.value;
+            
+            // Target the iframe's content window
+            iframe.contentWindow.postMessage(msg, trustedOrigin);
+            
+            chatBox.innerHTML += `<div><strong>You (Parent):</strong> ${msg}</div>`;
+            input.value = '';
+        }
+
+        // 2. Receiving Ack/Replies from Child
+        window.addEventListener('message', (event) => {
+            if (event.origin !== trustedOrigin) return; // Security filter
+
+            chatBox.innerHTML += `<div style="color: blue;"><strong>Child Node:</strong> ${event.data}</div>`;
+        });
+    </script>
+</body>
+</html>
