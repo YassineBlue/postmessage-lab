@@ -4,6 +4,11 @@ A simple browser lab that demonstrates how `window.postMessage()` works between 
 
 The project is designed for learning cross-window communication in JavaScript in a clean and visual way.
 
+## Live Demo
+
+https://yassineblue.github.io/postmessage-lab/
+
+
 ## Features
 
 - Send messages from the parent window to the iframe
@@ -19,7 +24,7 @@ The project is designed for learning cross-window communication in JavaScript in
 
 ## Running the Project
 
-This project should be run through a local server because it uses origin validation.
+This project can be run locally using a server such as XAMPP, or directly through the GitHub Pages live demo above.
 
 ### Using XAMPP
 
